@@ -1,7 +1,10 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable quotes */
 import { PermissionsAndroid } from "react-native";
-
+/**
+ * @name requestCameraAndAudioPermission
+ * @description Function to request permission for Audio and Camera
+ */
 export default async function requestCameraAndAudioPermission() {
 	try {
 		const granted = await PermissionsAndroid.requestMultiple([

@@ -68,8 +68,11 @@ class Video extends Component {
     RtcEngine.joinChannel(this.state.channelName, this.state.uid);  //Join Channel
     RtcEngine.enableAudio();                                        //Enable the audio
   }
-
-  toggleAudio = () => {                           //Function to toggle local user's audio
+  /**
+  * @name toggleAudio
+  * @description Function to toggle local user's audio
+  */
+  toggleAudio = () => {
     let mute = this.state.audMute;
     console.log('Audio toggle', mute);
     RtcEngine.muteLocalAudioStream(!mute);
@@ -77,8 +80,11 @@ class Video extends Component {
       audMute: !mute,
     });
   }
-
-  toggleVideo = () => {                         //Function to toggle local user's video
+  /**
+  * @name toggleVideo
+  * @description Function to toggle local user's video
+  */
+  toggleVideo = () => {
     let mute = this.state.vidMute;
     console.log('Video toggle', mute);
     this.setState({
@@ -86,12 +92,18 @@ class Video extends Component {
     });
     RtcEngine.muteLocalVideoStream(!this.state.vidMute);
   }
-
-  endCall() {                                  //Function to end the call
+  /**
+  * @name endCall
+  * @description Function to end the call
+  */
+  endCall() {
     RtcEngine.destroy();
     Actions.home();
   }
-
+  /**
+  * @name videoView
+  * @description Function to return the view for the app
+  */
   videoView() {
     return (
       <View style={{ flex: 1 }}>
