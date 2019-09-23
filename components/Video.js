@@ -1,7 +1,7 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
 import React, { Component } from 'react';
-import { View, StyleSheet, NativeModules, Platform } from 'react-native';
+import { View, StyleSheet, NativeModules, Platform, ScrollView, Text, Dimensions, TouchableWithoutFeedback } from 'react-native';
 import { RtcEngine, AgoraView } from 'react-native-agora';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Actions } from 'react-native-router-flux';
@@ -27,6 +27,7 @@ class Video extends Component {
       audMute: false,                             //State variable for Audio Mute
       joinSucceed: false,                         //State variable for storing success
     };
+    // this.peerClick = this.peerClick.bind(this);
     if (Platform.OS === 'android') {
       const config = {                            //Setting config of the app
         appid: this.state.appid,                  //App ID
@@ -44,9 +45,18 @@ class Video extends Component {
       RtcEngine.init(config);                     //Initialize the RTC engine
     }
   }
-
   componentDidMount() {
+    // if (this.state.peerIds.length !== 0) {
+    //   // eslint-disable-next-line react/no-did-mount-set-state
+    //   this.setState({
+    //     activeUser: this.state.peerIds[0],
+    //     inactivePeerIds: this.state.peerIds.filter(uid => uid !== this.state.activeUser),
+    //   });
+    // }
     RtcEngine.on('userJoined', (data) => {
+      // if (this.state.activeUser === null) {
+      //   this.state.activeUser = data.uid;
+      // }
       const { peerIds } = this.state;             //Get currrent peer IDs
       if (peerIds.indexOf(data.uid) === -1) {     //If new user has joined
         this.setState({
@@ -57,7 +67,19 @@ class Video extends Component {
     RtcEngine.on('userOffline', (data) => {       //If user leaves
       this.setState({
         peerIds: this.state.peerIds.filter(uid => uid !== data.uid), //remove peer ID from state array
+        // inactivePeerIds: this.state.inactivePeerIds.filter(uid => uid !== data.uid),
       });
+      //   if (this.state.peerIds.length === 0) {
+      //     this.setState({
+      //       activeUser: null,
+      //       inactivePeerIds: [],
+      //     });
+      //   }
+      //   else if (data.uid === this.state.activeUser) {
+      //     this.setState({
+      //       activeUser: this.state.peerIds[0],
+      //     });
+      //   }
     });
     RtcEngine.on('joinChannelSuccess', (data) => {                   //If Local user joins RTC channel
       RtcEngine.startPreview();                                      //Start RTC preview
@@ -72,7 +94,7 @@ class Video extends Component {
   * @name toggleAudio
   * @description Function to toggle local user's audio
   */
-  toggleAudio = () => {
+  toggleAudio() {
     let mute = this.state.audMute;
     console.log('Audio toggle', mute);
     RtcEngine.muteLocalAudioStream(!mute);
@@ -84,7 +106,7 @@ class Video extends Component {
   * @name toggleVideo
   * @description Function to toggle local user's video
   */
-  toggleVideo = () => {
+  toggleVideo() {
     let mute = this.state.vidMute;
     console.log('Video toggle', mute);
     this.setState({
@@ -100,6 +122,26 @@ class Video extends Component {
     RtcEngine.destroy();
     Actions.home();
   }
+  peerClick(data) {
+    let peerIdToSwap = this.state.peerIds.indexOf(data);
+    this.setState(prevState => {
+      let datax = [...prevState.peerIds];
+      let temp = datax[peerIdToSwap];
+      datax[peerIdToSwap] = datax[0];
+      datax[0] = temp;
+      return { peerIds: datax };
+    }, () => {
+    });
+  }
+  // userList() {
+  //   return this.state.peerIds.map((data) => {
+  //     return (
+  //       <AgoraView style={{}}
+  //         remoteUid={data}
+  //         mode={1} key={data} />
+  //     );
+  //   });
+  // }
   /**
   * @name videoView
   * @description Function to return the view for the app
@@ -108,44 +150,37 @@ class Video extends Component {
     return (
       <View style={{ flex: 1 }}>
         {
-          this.state.peerIds.length > 3                                     //view for four videostreams
+          // this.state.peerIds.length > 1                             //view for videostream
+          //   ? <View><AgoraView style={{ flex: 3 }}
+          //     remoteUid={this.state.peerIds[0]} mode={1} />
+          //</View>
+          this.state.peerIds.length > 1
             ? <View style={{ flex: 1 }}>
-              <View style={{ flex: 1 / 2, flexDirection: 'row' }}><AgoraView style={{ flex: 1 / 2 }}
-                remoteUid={this.state.peerIds[0]}
-                mode={1} />
-                <AgoraView style={{ flex: 1 / 2 }}
-                  remoteUid={this.state.peerIds[1]}
-                  mode={1} /></View>
-              <View style={{ flex: 1 / 2, flexDirection: 'row' }}><AgoraView style={{ flex: 1 / 2 }}
-                remoteUid={this.state.peerIds[2]}
-                mode={1} />
-                <AgoraView style={{ flex: 1 / 2 }}
-                  remoteUid={this.state.peerIds[3]}
-                  mode={1} /></View>
-            </View>
-            : this.state.peerIds.length > 2                                 //view for three videostreams
-              ? <View style={{ flex: 1 }}>
-                <View style={{ flex: 1 / 2 }}><AgoraView style={{ flex: 1 }}
-                  remoteUid={this.state.peerIds[0]}
-                  mode={1} /></View>
-                <View style={{ flex: 1 / 2, flexDirection: 'row' }}><AgoraView style={{ flex: 1 / 2 }}
-                  remoteUid={this.state.peerIds[1]}
-                  mode={1} />
-                  <AgoraView style={{ flex: 1 / 2 }}
-                    remoteUid={this.state.peerIds[2]}
-                    mode={1} /></View>
+              <View style={{ height: dimensions.height * 3 / 4 }}>
+                <AgoraView style={{ flex: 1 }}
+                  remoteUid={this.state.peerIds[0]} mode={1} key={this.state.peerIds[0]}/>
               </View>
-              : this.state.peerIds.length > 1                              //view for two videostreams
-                ? <View style={{ flex: 1 }}><AgoraView style={{ flex: 1 }}
-                  remoteUid={this.state.peerIds[0]}
-                  mode={1} /><AgoraView style={{ flex: 1 }}
-                    remoteUid={this.state.peerIds[1]}
-                    mode={1} /></View>
-                : this.state.peerIds.length > 0                             //view for videostream
-                  ? <AgoraView style={{ flex: 1 }}
-                    remoteUid={this.state.peerIds[0]}
-                    mode={1} />
-                  : <View />
+              <View style={{ height: dimensions.height / 4 }}>
+                <ScrollView horizontal={true} decelerationRate={0}
+                  snapToInterval={dimensions.width / 2} snapToAlignment={'center'} style={{ width: dimensions.width }}>
+                  {
+                    this.state.peerIds.slice(1).map((data) => (
+                      <TouchableWithoutFeedback style={{ width: dimensions.width / 2, height: dimensions.height / 4 }}
+                        onPress={() => this.peerClick(data)} key={data}>
+                        <AgoraView style={{ width: dimensions.width / 2 }}
+                          remoteUid={data} mode={1} key={data} />
+                      </TouchableWithoutFeedback>
+                    ))
+                  }
+                </ScrollView>
+              </View>
+            </View>
+            : this.state.peerIds.length > 0
+              ? <View style={{ height: dimensions.height * 3 / 4 }}>
+                <AgoraView style={{ flex: 1 }}
+                  remoteUid={this.state.peerIds[0]} mode={1} />
+              </View>
+              : <Text>No users connected</Text>
         }
         {
           !this.state.vidMute                                              //view for local video
@@ -177,6 +212,11 @@ class Video extends Component {
     return this.videoView();
   }
 }
+
+let dimensions = {
+  width: Dimensions.get('window').width,
+  height: Dimensions.get('window').height,
+};
 
 const styles = StyleSheet.create({
   buttonBar: {
