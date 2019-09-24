@@ -27,7 +27,6 @@ class Video extends Component {
       audMute: false,                             //State variable for Audio Mute
       joinSucceed: false,                         //State variable for storing success
     };
-    // this.peerClick = this.peerClick.bind(this);
     if (Platform.OS === 'android') {
       const config = {                            //Setting config of the app
         appid: this.state.appid,                  //App ID
@@ -46,17 +45,7 @@ class Video extends Component {
     }
   }
   componentDidMount() {
-    // if (this.state.peerIds.length !== 0) {
-    //   // eslint-disable-next-line react/no-did-mount-set-state
-    //   this.setState({
-    //     activeUser: this.state.peerIds[0],
-    //     inactivePeerIds: this.state.peerIds.filter(uid => uid !== this.state.activeUser),
-    //   });
-    // }
     RtcEngine.on('userJoined', (data) => {
-      // if (this.state.activeUser === null) {
-      //   this.state.activeUser = data.uid;
-      // }
       const { peerIds } = this.state;             //Get currrent peer IDs
       if (peerIds.indexOf(data.uid) === -1) {     //If new user has joined
         this.setState({
@@ -67,19 +56,7 @@ class Video extends Component {
     RtcEngine.on('userOffline', (data) => {       //If user leaves
       this.setState({
         peerIds: this.state.peerIds.filter(uid => uid !== data.uid), //remove peer ID from state array
-        // inactivePeerIds: this.state.inactivePeerIds.filter(uid => uid !== data.uid),
       });
-      //   if (this.state.peerIds.length === 0) {
-      //     this.setState({
-      //       activeUser: null,
-      //       inactivePeerIds: [],
-      //     });
-      //   }
-      //   else if (data.uid === this.state.activeUser) {
-      //     this.setState({
-      //       activeUser: this.state.peerIds[0],
-      //     });
-      //   }
     });
     RtcEngine.on('joinChannelSuccess', (data) => {                   //If Local user joins RTC channel
       RtcEngine.startPreview();                                      //Start RTC preview
@@ -122,7 +99,11 @@ class Video extends Component {
     RtcEngine.destroy();
     Actions.home();
   }
-  peerClick(data) {
+  /**
+  * @name peerClick
+  * @description Function to swap the main peer videostream with a different peer videostream
+  */
+ peerClick(data) {
     let peerIdToSwap = this.state.peerIds.indexOf(data);
     this.setState(prevState => {
       let datax = [...prevState.peerIds];
@@ -130,18 +111,8 @@ class Video extends Component {
       datax[peerIdToSwap] = datax[0];
       datax[0] = temp;
       return { peerIds: datax };
-    }, () => {
     });
   }
-  // userList() {
-  //   return this.state.peerIds.map((data) => {
-  //     return (
-  //       <AgoraView style={{}}
-  //         remoteUid={data}
-  //         mode={1} key={data} />
-  //     );
-  //   });
-  // }
   /**
   * @name videoView
   * @description Function to return the view for the app
@@ -150,10 +121,6 @@ class Video extends Component {
     return (
       <View style={{ flex: 1 }}>
         {
-          // this.state.peerIds.length > 1                             //view for videostream
-          //   ? <View><AgoraView style={{ flex: 3 }}
-          //     remoteUid={this.state.peerIds[0]} mode={1} />
-          //</View>
           this.state.peerIds.length > 1
             ? <View style={{ flex: 1 }}>
               <View style={{ height: dimensions.height * 3 / 4 }}>
