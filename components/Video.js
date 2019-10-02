@@ -1,7 +1,8 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable prettier/prettier */
+
 import React, { Component } from 'react';
-import { View, StyleSheet, NativeModules, Platform, ScrollView, Text, Dimensions, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, NativeModules, ScrollView, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { RtcEngine, AgoraView } from 'react-native-agora';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Actions } from 'react-native-router-flux';
@@ -27,22 +28,20 @@ class Video extends Component {
       audMute: false,                             //State variable for Audio Mute
       joinSucceed: false,                         //State variable for storing success
     };
-    if (Platform.OS === 'android') {
-      const config = {                            //Setting config of the app
-        appid: this.state.appid,                  //App ID
-        channelProfile: 0,                        //Set channel profile as 0 for RTC
-        videoEncoderConfig: {                     //Set Video feed encoder settings
-          width: 720,
-          height: 1080,
-          bitrate: 1,
-          frameRate: FPS30,
-          orientationMode: Adaptative,
-        },
-        audioProfile: AudioProfileDefault,
-        audioScenario: AudioScenarioDefault,
-      };
-      RtcEngine.init(config);                     //Initialize the RTC engine
-    }
+    const config = {                            //Setting config of the app
+      appid: this.state.appid,                  //App ID
+      channelProfile: 0,                        //Set channel profile as 0 for RTC
+      videoEncoderConfig: {                     //Set Video feed encoder settings
+        width: 720,
+        height: 1080,
+        bitrate: 1,
+        frameRate: FPS30,
+        orientationMode: Adaptative,
+      },
+      audioProfile: AudioProfileDefault,
+      audioScenario: AudioScenarioDefault,
+    };
+    RtcEngine.init(config);                     //Initialize the RTC engine
   }
   componentDidMount() {
     RtcEngine.on('userJoined', (data) => {
@@ -103,14 +102,14 @@ class Video extends Component {
   * @name peerClick
   * @description Function to swap the main peer videostream with a different peer videostream
   */
- peerClick(data) {
+  peerClick(data) {
     let peerIdToSwap = this.state.peerIds.indexOf(data);
     this.setState(prevState => {
-      let datax = [...prevState.peerIds];
-      let temp = datax[peerIdToSwap];
-      datax[peerIdToSwap] = datax[0];
-      datax[0] = temp;
-      return { peerIds: datax };
+      let currentPeers = [...prevState.peerIds];
+      let temp = currentPeers[peerIdToSwap];
+      currentPeers[peerIdToSwap] = currentPeers[0];
+      currentPeers[0] = temp;
+      return { peerIds: currentPeers };
     });
   }
   /**
@@ -123,27 +122,27 @@ class Video extends Component {
         {
           this.state.peerIds.length > 1
             ? <View style={{ flex: 1 }}>
-              <View style={{ height: dimensions.height * 3 / 4 }}>
+              <View style={{ height: dimensions.height * 3 / 4 - 50 }}>
                 <AgoraView style={{ flex: 1 }}
-                  remoteUid={this.state.peerIds[0]} mode={1} key={this.state.peerIds[0]}/>
+                  remoteUid={this.state.peerIds[0]} mode={1} key={this.state.peerIds[0]} />
               </View>
               <View style={{ height: dimensions.height / 4 }}>
                 <ScrollView horizontal={true} decelerationRate={0}
-                  snapToInterval={dimensions.width / 2} snapToAlignment={'center'} style={{ width: dimensions.width }}>
+                  snapToInterval={dimensions.width / 2} snapToAlignment={'center'} style={{ width: dimensions.width, height: dimensions.height / 4 }}>
                   {
                     this.state.peerIds.slice(1).map((data) => (
-                      <TouchableWithoutFeedback style={{ width: dimensions.width / 2, height: dimensions.height / 4 }}
+                      <TouchableOpacity style={{ width: dimensions.width / 2, height: dimensions.height / 4 }}
                         onPress={() => this.peerClick(data)} key={data}>
-                        <AgoraView style={{ width: dimensions.width / 2 }}
+                        <AgoraView style={{ width: dimensions.width / 2, height: dimensions.height / 4 }}
                           remoteUid={data} mode={1} key={data} />
-                      </TouchableWithoutFeedback>
+                      </TouchableOpacity>
                     ))
                   }
                 </ScrollView>
               </View>
             </View>
             : this.state.peerIds.length > 0
-              ? <View style={{ height: dimensions.height * 3 / 4 }}>
+              ? <View style={{ height: dimensions.height - 50 }}>
                 <AgoraView style={{ flex: 1 }}
                   remoteUid={this.state.peerIds[0]} mode={1} />
               </View>
@@ -174,13 +173,12 @@ class Video extends Component {
       </View>
     );
   }
-
   render() {
     return this.videoView();
   }
 }
 
-let dimensions = {
+let dimensions = {                                            //get dimensions of the device to use in view styles
   width: Dimensions.get('window').width,
   height: Dimensions.get('window').height,
 };
