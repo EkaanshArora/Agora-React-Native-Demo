@@ -15,3 +15,42 @@ Implementation of Agora's SDK for Video Calling between users in a React Native 
 - Connect your device or start an AVD then run `react-native run-android` to start the app.
 - Enter a channel name and hit submit on the device.
 - Use the same channel on a different device, and that's it. You should have a video call going.
+
+## Troubleshooting
+
+### debug.keystore
+
+Error:
+
+```
+Execution failed for task ':app:validateSigningDebug'.
+> Keystore file '/Agora-React-Native-Demo/android/app/debug.keystore' not found for signing config 'debug'.
+```
+
+Fix:
+
+```
+cd andoid/app
+keytool -genkey -v -keystore debug.keystore -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000
+enter blank on all answers and confirm with 'y' on last question
+```
+
+### iOS project
+
+Error:
+
+```
+Project does not build
+```
+
+Fix:
+
+```
+cd ios
+open AgoraDemoReactNative.xcodeproj
+```
+
+Then in XCode:
+
+File -> Project settings -> Change build system to 'legacy build system'
+
