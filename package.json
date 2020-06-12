@@ -9,9 +9,12 @@
   },
   "dependencies": {
     "react": "16.8.6",
-    "react-native": "0.60.5",
-    "react-native-agora": "^2.9.0-alpha.1",
-    "react-native-router-flux": "^4.0.6",
+    "react-native": "^0.62.2",
+    "react-native-agora": "2.9.1-alpha.3",
+    "react-native-gesture-handler": "^1.6.1",
+    "react-native-reanimated": "^1.9.0",
+    "react-native-router-flux": "4.2.0-beta.1",
+    "react-native-screens": "^2.8.0",
     "react-native-vector-icons": "^6.6.0"
   },
   "devDependencies": {
