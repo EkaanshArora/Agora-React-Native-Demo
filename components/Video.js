@@ -23,6 +23,8 @@ class Video extends Component {
       peerIds: [],                                //Array for storing connected peers
       uid: Math.floor(Math.random() * 100),       //Generate a UID for local user
       appid: this.props.AppID,                    //Enter the App ID generated from the Agora Website
+      token: this.props.token,                    // This is needed when the AppCertificate is enabled in the project. Token
+                                                  // can be generated here https://console.agora.io/project/<project-id>
       channelName: this.props.ChannelName,        //Channel Name for the current session
       vidMute: false,                             //State variable for Video Mute
       audMute: false,                             //State variable for Audio Mute
@@ -63,7 +65,7 @@ class Video extends Component {
         joinSucceed: true,                                           //Set state variable to true
       });
     });
-    RtcEngine.joinChannel(this.state.channelName, this.state.uid);  //Join Channel
+    RtcEngine.joinChannel(this.state.channelName, this.state.uid, this.state.token);  //Join Channel
     RtcEngine.enableAudio();                                        //Enable the audio
   }
   /**
