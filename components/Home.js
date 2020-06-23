@@ -14,7 +14,7 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      AppID: '*INSERT APP ID HERE*', //Set your APPID here
+      AppID: '*ENTER APP ID HERE*', //Set your APPID here
       ChannelName: '', //Set a default channel or leave blank
     };
     if (Platform.OS === 'android') {
@@ -55,7 +55,7 @@ class Home extends Component {
             title="Start Call!"
             onPress={this.handleSubmit}
             style={styles.submitButton}>
-            <Text style={{color: '#ffffff'}}> Start Call </Text>
+            <Text style={styles.white}> Start Call </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -92,6 +92,9 @@ const styles = StyleSheet.create({
     color: '#0093E9',
     borderRadius: 4,
     paddingLeft: 20,
+  },
+  white: {
+    color: '#fff',
   },
 });
 

@@ -123,12 +123,12 @@ class Video extends Component {
    */
   videoView() {
     return (
-      <View style={{flex: 1}}>
+      <View style={styles.full}>
         {this.state.peerIds.length > 1 ? (
-          <View style={{flex: 1}}>
+          <View style={styles.full}>
             <View style={{height: (dimensions.height * 3) / 4 - 50}}>
               <AgoraView
-                style={{flex: 1}}
+                style={styles.full}
                 remoteUid={this.state.peerIds[0]}
                 mode={1}
                 key={this.state.peerIds[0]}
@@ -169,7 +169,7 @@ class Video extends Component {
         ) : this.state.peerIds.length > 0 ? (
           <View style={{height: dimensions.height - 50}}>
             <AgoraView
-              style={{flex: 1}}
+              style={styles.full}
               remoteUid={this.state.peerIds[0]}
               mode={1}
             />
@@ -249,6 +249,9 @@ const styles = StyleSheet.create({
     paddingRight: 40,
     paddingBottom: 15,
     borderRadius: 0,
+  },
+  full: {
+    flex: 1,
   },
 });
 
